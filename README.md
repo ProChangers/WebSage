@@ -9,7 +9,9 @@ Before running the application, ensure you have the following installed:
 
 Python 3.7 or higher
 pip (Python package installer)
+
 Required Python Packages
+
 The required packages are listed in requirements.txt.
 
 Installation
