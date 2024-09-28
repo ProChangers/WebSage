@@ -61,55 +61,79 @@ def main():
     st.set_page_config(page_title="WebSage", layout="wide")
 
     # Add a title and description
-    st.title("🌐WebSage")
-    st.write("""
-    Unleash your online learning potential with WebSage! This powerful tool effortlessly summarizes website content, distilling articles, blogs, and online tutorials into digestible insights. With integrated Q&A features, you can easily clarify doubts and enhance your understanding of complex topics. WebSage empowers you to navigate the vast web of information quickly and efficiently, making knowledge acquisition a seamless experience. Transform the way you learn online with WebSage—your intelligent guide to web content!
+    st.title("🌐 WebSage")
+    st.write("""\
+    Unleash your online learning potential with **WebSage!** This powerful tool effortlessly summarizes website content, distilling articles, blogs, and online tutorials into digestible insights. With integrated Q&A features, you can easily clarify doubts and enhance your understanding of complex topics. **WebSage** empowers you to navigate the vast web of information quickly and efficiently, making knowledge acquisition a seamless experience. Transform the way you learn online with **WebSage**—your intelligent guide to web content!
     """)
+
+    # CSS to style the input box
+    st.markdown(
+        """
+        <style>
+        .stTextInput > div > div > input {
+            border: 2px solid black; /* Set border color */
+            border-radius: 5px; /* Set border radius */
+        }
+        </style>
+        """, unsafe_allow_html=True
+    )
 
     # URL input field
     st.sidebar.header("Website Input")
-    website_url = st.sidebar.text_input("Enter Website URL")
+    website_url = st.sidebar.text_input("Paste your Website URL here!")
 
-    if website_url:
-        with st.spinner(f"Fetching and summarizing content from {website_url}..."):
-            # Extract text from the website
-            text = extract_text_from_url(website_url)
+    # Initialize session state for messages, summary, and conversation if not already done
+    if "web_messages" not in st.session_state:
+        st.session_state.web_messages = []
+    if "summary" not in st.session_state:
+        st.session_state.summary = ""
+    if "conversation" not in st.session_state:
+        st.session_state.conversation = None
 
-            if text:
-                # Summarize the text and set up the Q&A conversation
-                summary, conversation = summarize_and_answer(text)
+    # Add a button to process the URL
+    if st.sidebar.button("Process"):
+        # Check if a URL has been entered
+        if website_url:
+            with st.spinner(f"Fetching and summarizing content from {website_url}..."):
+                # Extract text from the website
+                text = extract_text_from_url(website_url)
 
-                # Display the summary
-                st.subheader("Website Summary:")
-                st.write(summary)
+                if text:
+                    # Summarize the text and set up the Q&A conversation
+                    summary, conversation = summarize_and_answer(text)
 
-                # Initialize session state for chat messages
-                if "web_messages" not in st.session_state:
-                    st.session_state.web_messages = []
+                    # Store summary and conversation in session state
+                    st.session_state.summary = summary
+                    st.session_state.conversation = conversation
 
-                # Q&A section
-                st.subheader("💬 Ask Questions About the Website")
-                web_messages = st.container()
-                with web_messages:
-                    # Display chat messages
-                    for message in st.session_state.web_messages:
-                        if message['role'] == 'user':
-                            st.chat_message("user").write(message['content'])
-                        else:
-                            st.chat_message("assistant").write(message['content'])
+    # Display the summary if it exists
+    if st.session_state.summary:
+        st.subheader("Website Summary:")
+        st.write(st.session_state.summary)
 
-                    # User input for Q&A
-                    if prompt := st.chat_input("Ask a question about the website"):
-                        st.session_state.web_messages.append({"role": "user", "content": prompt})
-                        st.chat_message("user").write(prompt)
+        # Q&A section
+        st.subheader("💬 Ask Questions About the Website")
+        web_messages = st.container()
+        with web_messages:
+            # Display chat messages
+            for message in st.session_state.web_messages:
+                if message['role'] == 'user':
+                    st.chat_message("user").write(message['content'])
+                else:
+                    st.chat_message("assistant").write(message['content'])
 
-                        with st.spinner("Generating response..."):
-                            response = conversation.predict(input=prompt)
-                            if response.strip() == "":
-                                response = "The context is not provided on the website."
+            # User input for Q&A
+            if prompt := st.chat_input("Ask a question about the website"):
+                st.session_state.web_messages.append({"role": "user", "content": prompt})
+                st.chat_message("user").write(prompt)
 
-                        st.session_state.web_messages.append({"role": "assistant", "content": response})
-                        st.chat_message("assistant").write(response)
+                with st.spinner("Generating response..."):
+                    response = st.session_state.conversation.predict(input=prompt)
+                    if response.strip() == "":
+                        response = "The context is not provided on the website."
+
+                st.session_state.web_messages.append({"role": "assistant", "content": response})
+                st.chat_message("assistant").write(response)
 
 if __name__ == "__main__":
     main()
