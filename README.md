@@ -16,27 +16,27 @@ Installation
 
 1. Clone the repository:
 
-  git clone <repository-url>
-  cd <repository-folder>
+    git clone <repository-url>
+    cd <repository-folder>
 
 2. Create a virtual environment (recommended):
 
-  python -m venv venv source venv/bin/activate
+    python -m venv venv source venv/bin/activate
 
-  On Windows use venv\Scripts\activate
+    On Windows use venv\Scripts\activate
 
 3. Install the required packages:
 
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
 4. Set up your environment variables. Create a .env file in the root directory and add your Google API key:
 
-  GOOGLE_API_KEY=<your_google_api_key>
+    GOOGLE_API_KEY=<your_google_api_key>
 
 5. Running the Application
 
-  To run the application, execute the following command in your terminal:
+    To run the application, execute the following command in your terminal:
 
-  streamlit run app.py
+    streamlit run app.py
 
-  This will start the Streamlit server, and you can access the application in your web browser at http://localhost:8501.
+    This will start the Streamlit server, and you can access the application in your web browser at http://localhost:8501.
