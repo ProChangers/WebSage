@@ -58,11 +58,13 @@ def summarize_and_answer(text):
 # Main function for the Streamlit app
 def main():
     # Set up page config
-    st.set_page_config(page_title="Website Summarizer and Q&A", layout="wide")
+    st.set_page_config(page_title="WebSage", layout="wide")
 
     # Add a title and description
-    st.title("🌐 Website Summarizer and Q&A")
-    st.write("Enter a website URL to summarize the content and ask questions about it.")
+    st.title("🌐WebSage")
+    st.write("""
+    Unleash your online learning potential with WebSage! This powerful tool effortlessly summarizes website content, distilling articles, blogs, and online tutorials into digestible insights. With integrated Q&A features, you can easily clarify doubts and enhance your understanding of complex topics. WebSage empowers you to navigate the vast web of information quickly and efficiently, making knowledge acquisition a seamless experience. Transform the way you learn online with WebSage—your intelligent guide to web content!
+    """)
 
     # URL input field
     st.sidebar.header("Website Input")
@@ -77,12 +79,9 @@ def main():
                 # Summarize the text and set up the Q&A conversation
                 summary, conversation = summarize_and_answer(text)
 
-                # Display the summary in a card format
+                # Display the summary
                 st.subheader("Website Summary:")
-                st.markdown(
-                    f"<div style='border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; background-color: #f9f9f9;'>{summary}</div>",
-                    unsafe_allow_html=True
-                )
+                st.write(summary)
 
                 # Initialize session state for chat messages
                 if "web_messages" not in st.session_state:
